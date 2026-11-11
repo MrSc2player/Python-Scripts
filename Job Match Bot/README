@@ -1,0 +1,111 @@
+# 🤖 Job-Match-Bot — DE-Jobs mit Telegram-Zustellung
+
+Personalisierter Telegram-Bot, der Stellenanzeigen in Deutschland durchsucht, gegen ein individuelles IT-Profil (Tech-Stack, Remote, Einstiegsniveau) bewertet und passende Treffer bequem per Telegram-Nachricht zustellt.
+
+**Features:**
+- 🔍 Automatische Jobsuche über zwei Quellen (Bundesagentur für Arbeit + GermanTechJobs.de)
+- 🎯 Score-basiertes Matching gegen das eigene Profil (Titel, Tech-Stack, Security, Remote, Frische)
+- 🇩🇪 Deutschland-Filter (Städte, PLZ, Länderangaben) inkl. Remote-Stellen
+- 💬 Telegram-Bot mit Befehlen: `/more`, `/all`, `/top`, `/status`, `/fetch`, `/reset`
+- ⏰ Automatische tägliche Suche (standardmäßig 08:00 Uhr, anpassbar)
+- 💾 Lokaler Cache (`.job_state.json`) gegen Dubletten
+
+---
+
+## ⚙️ Installation & notwendige Pakete
+
+### Debian / Ubuntu
+```bash
+sudo apt update
+sudo apt install python3 python3-requests python3-dotenv python3-beautifulsoup4 python3-lxml
+```
+
+### Arch Linux / CachyOS
+```bash
+sudo pacman -S python python-requests python-dotenv python-beautifulsoup4 python-lxml
+```
+
+### Fedora
+```bash
+sudo dnf install python3 python3-requests python3-dotenv python3-beautifulsoup4 python-lxml
+```
+
+---
+
+## 💬 Telegram-Bot einrichten (Kurzanleitung)
+
+**1. Bot erstellen**
+- In Telegram mit [@BotFather](https://t.me/BotFather) chatten
+- `/newbot` senden, Namen und Benutzernamen vergeben
+- Den erhaltenen **Bot-Token** notieren (Format: `123456789:AAE_...`)
+
+**2. Chat-ID ermitteln**
+- Dem neuen Bot in Telegram eine beliebige Nachricht schicken (z. B. „hi")
+- Im Browser öffnen: `https://api.telegram.org/bot<TOKEN>/getUpdates` (deinen Token einsetzen)
+- In der JSON-Antwort die Nummer bei `"chat":{"id":...}` heraussuchen — das ist deine **Chat-ID**
+
+**3. `.env`-Datei anlegen**
+
+Im Skriptverzeichnis eine Datei `.env` erstellen:
+```
+TELEGRAM_BOT_TOKEN=123456789:AAE_dein_token_hier
+TELEGRAM_CHAT_ID=987654321
+```
+
+ℹ️ **Hinweis:** Die `.env`-Datei wird nur lokal angelegt und nicht in das Repository hochgeladen — das Repo enthält lediglich das Skript und diese Anleitung.
+Auf diese Weise bleiben Bot-Token und Chat-ID immer lokal auf dem eigenen System.
+
+**4. Starten**
+```bash
+python3 Job-Match-Bot_v3.4.py
+```
+
+Der Bot meldet sich beim Start in Telegram und führt die erste Suche durch. Danach sucht er täglich zur eingestellten Zeit (`DAILY_RUN_TIME` im Skript) automatisch.
+
+### Bot-Befehle im Überblick
+
+| Befehl | Funktion |
+|---|---|
+| `/more` | Nächste 10 Treffer senden |
+| `/all` | Alle verbleibenden Treffer senden |
+| `/top` | Die 5 besten Treffer anzeigen |
+| `/status` | Warteschlange, Cache & letzte Suche |
+| `/fetch` | Sofort neue Suche starten |
+| `/reset` | Cache leeren und neu suchen |
+| `/help` | Hilfe |
+
+---
+
+## 🔧 Anpassen
+
+Alle relevanten Einstellungen liegen direkt am Anfang des Skripts:
+
+- **`SEARCH_TERMS`** — Suchbegriffe für die Jobquellen (z. B. „DevOps", „IT Support")
+- **`PROFILE_TECH`** — Tech-Stack, der die Bewertung erhöht (z. B. Proxmox, Veeam, Linux)
+- **`TITLE_MUST_MATCH` / `TITLE_EXCLUDE`** — welche Jobtitel akzeptiert/ausgeschlossen werden
+- **`MIN_SCORE`** — Score-Schwelle, ab der ein Job gemeldet wird (Standard: 30)
+- **`DAILY_RUN_TIME`** — Uhrzeit der täglichen Suche
+- **`SOURCES`** — einzelne Quellen ein-/ausschalten (z. B. `"germantechjobs": False`)
+
+---
+
+## ⚠️ Hinweis zu Web-Scraping
+
+Die **Bundesagentur für Arbeit** bietet eine öffentliche API, die der offiziellen Jobsuche der Website selbst zugrunde liegt — deren Nutzung in Programmen ist etablierte Praxis.
+
+**GermanTechJobs.de** dagegen bietet **keine öffentliche API** an. Das Skript greift hier auf das Parsen der normalen Website zurück (**Web-Scraping**). Dabei gilt:
+
+- Scraping ist **nicht offiziell unterstützt** und kann gegen die Nutzungsbedingungen der Seite verstoßen.
+- Die CSS-Selektoren sind heuristisch — bei Layout-Änderungen der Seite funktioniert das Parsing nicht mehr.
+- Beim Schreiben eigener Scraper für Seiten ohne API bitte immer:
+  - die `robots.txt` der Seite respektieren,
+  - **delays** zwischen Requests einbauen (in diesem Skript: 1 Sekunde),
+  - nur öffentlich sichtbare Daten in vernünftiger Menge abrufen,
+  - prüfen, ob die Seite alternativ eine API, RSS-Feed oder export-Funktion anbietet.
+- Wer das Modul nicht nutzen möchte, deaktiviert es einfach: `"germantechjobs": False` in `SOURCES`.
+
+---
+
+## 📄 Lizenz
+
+Dieses Projekt steht unter [The Unlicense](https://unlicense.org) — Public Domain, frei für jeden Zweck.
