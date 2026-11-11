@@ -8,8 +8,9 @@ Folgende Skripte stelle ich hier zur verfügung:
 - Universal Converter to CHD
 - Mp3tag Cleaner
 - Mp3tag Set Genre
+- Job Match Bot
 
-Diese Skripte wurden zu Privaten Zwecke erstellt um Sachen in einen Schwung zu erledigen, ebenso lässt sich das auch mit entsprechenden Tools automatisieren.
+Diese Skripte wurden zu Privaten Zwecke erstellt um Vorgänge in einen Schwung zu erledigen, ebenso lässt sich das auch mit entsprechenden Tools automatisieren.
 
 LG Mrsc2player
 
@@ -25,7 +26,8 @@ I’m making the following scripts available here:
 - Universal Converter to CHD
 - Mp3tag Cleaner
 - Mp3tag Set Genre
+- Job Match Bot
 
-These scripts were created for personal use to get things done in one go; this can also be automated using the appropriate tools.
+These scripts were created for personal use to complete tasks all at once; this can also be automated using the appropriate tools.
 
 Best regards, Mrsc2player
